@@ -130,8 +130,8 @@ in
     };
 
     extraConfig = lib.mkOption {
-      type = with lib.types; nullOr (attrsOf (attrsOf basicSettingsType));
-      default = null;
+      type = with lib.types; attrsOf (attrsOf basicSettingsType);
+      default = { };
       description = ''
         Extra config to add to the `konsolerc`.
       '';
@@ -143,11 +143,9 @@ in
       (lib.mkIf (cfg.defaultProfile != null) {
         "Desktop Entry"."DefaultProfile" = "${cfg.defaultProfile}.profile";
       })
-      (lib.mkIf (cfg.extraConfig != null) (
-        lib.mapAttrs (
-          groupName: (lib.mapAttrs (keyName: keyAttrs: { value = keyAttrs; }))
-        ) cfg.extraConfig
-      ))
+      (lib.mapAttrs (
+        groupName: (lib.mapAttrs (keyName: keyAttrs: { value = keyAttrs; }))
+      ) cfg.extraConfig)
       {
         "UiSettings"."ColorScheme" = lib.mkIf (cfg.ui.colorScheme != null) {
           value = cfg.ui.colorScheme;
@@ -170,7 +168,7 @@ in
                 profile.font.name != null
               ) "${profile.font.name},${builtins.toString profile.font.size}";
             in
-              {
+            {
               "konsole/${profileName}.profile".text = lib.generators.toINI { } (
                 lib.recursiveUpdate {
                   "General" = (
