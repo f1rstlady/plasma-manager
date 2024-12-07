@@ -145,7 +145,7 @@ in
       })
       (lib.mkIf (cfg.extraConfig != null) (
         lib.mapAttrs (
-          groupName: groupAttrs: (lib.mapAttrs (keyName: keyAttrs: { value = keyAttrs; }) groupAttrs)
+          groupName: (lib.mapAttrs (keyName: keyAttrs: { value = keyAttrs; }))
         ) cfg.extraConfig
       ))
       {
